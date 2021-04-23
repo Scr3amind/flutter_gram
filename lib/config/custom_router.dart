@@ -50,6 +50,7 @@ class CustomRouter {
 
   static Route onGenerateNestedRoute(RouteSettings settings) {
     print('Nested Route: ${settings.name}');
+    return MaterialPageRoute(builder: (_) => Scaffold(body: Center(child: Text('Error Page'),),));
   }
 
 }

@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gram/blocs/auth/auth_bloc.dart';
 import 'package:flutter_gram/config/custom_router.dart';
 import 'package:flutter_gram/enums/bottom_nav_item.dart';
+import 'package:flutter_gram/repositories/repositories.dart';
+import 'package:flutter_gram/screens/profile/bloc/profile_bloc.dart';
 import 'package:flutter_gram/screens/screens.dart';
 
 class TabNavigator extends StatelessWidget {
@@ -8,35 +12,28 @@ class TabNavigator extends StatelessWidget {
   final GlobalKey<NavigatorState> navigatorKey;
   final BottomNavItem item;
 
-  const TabNavigator({
-    Key key, 
-    this.navigatorKey, 
-    this.item
-  }) : super(key: key);
-  
+  const TabNavigator({Key key, this.navigatorKey, this.item}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     final routeBuilders = _routeBuilders();
-    
+
     return Navigator(
       key: navigatorKey,
       initialRoute: tabNavigatorRoot,
       onGenerateInitialRoutes: (_, initialRoute) {
-        return[
+        return [
           MaterialPageRoute(
-            settings: RouteSettings(name: tabNavigatorRoot),
-            builder: (context) => routeBuilders[initialRoute](context) 
-          )
+              settings: RouteSettings(name: tabNavigatorRoot),
+              builder: (context) => routeBuilders[initialRoute](context))
         ];
       },
-      onGenerateRoute: CustomRouter.onGenerateNestedRoute,      
+      onGenerateRoute: CustomRouter.onGenerateNestedRoute,
     );
   }
 
   Map<String, WidgetBuilder> _routeBuilders() {
-    return {
-      tabNavigatorRoot: (context) => _getScreen(context, item)
-    };
+    return {tabNavigatorRoot: (context) => _getScreen(context, item)};
   }
 
   Widget _getScreen(BuildContext context, BottomNavItem item) {
@@ -50,10 +47,15 @@ class TabNavigator extends StatelessWidget {
       case BottomNavItem.notifications:
         return NotificationsScreen();
       case BottomNavItem.profile:
-        return ProfileScreen();
+        return BlocProvider(
+          create: (_) => ProfileBloc(
+            userRepository: context.read<UserRepository>(),
+            authBloc: context.read<AuthBloc>()
+          )..add(ProfileLoadUser(userId: context.read<AuthBloc>().state.user.uid)),
+          child: ProfileScreen(),
+        );
       default:
         return Scaffold();
     }
   }
-
 }

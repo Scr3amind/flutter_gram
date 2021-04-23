@@ -7,6 +7,7 @@ import 'package:flutter_gram/blocs/blocs.dart';
 import 'package:flutter_gram/blocs/simple_bloc_observer.dart';
 import 'package:flutter_gram/config/custom_router.dart';
 import 'package:flutter_gram/repositories/auth/auth_repository.dart';
+import 'package:flutter_gram/repositories/user/user_repository.dart';
 
 
 void main() async {
@@ -25,7 +26,10 @@ class MyApp extends StatelessWidget {
       providers: [
         RepositoryProvider<AuthRepository>(
           create: (_) => AuthRepository(),
-        )
+        ),
+        RepositoryProvider<UserRepository>(
+          create: (_) => UserRepository(),
+        ),
       ],
       child: MultiBlocProvider(
         providers: [
