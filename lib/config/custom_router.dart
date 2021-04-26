@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gram/repositories/repositories.dart';
 import 'package:flutter_gram/screens/HomeScreen.dart';
+import 'package:flutter_gram/screens/edit_profile/cubit/edit_profile_cubit.dart';
 import 'package:flutter_gram/screens/login/cubit/login_cubit.dart';
 import 'package:flutter_gram/screens/nav/cubit/bottom_nav_bar_cubit.dart';
+import 'package:flutter_gram/screens/profile/bloc/profile_bloc.dart';
 import 'package:flutter_gram/screens/screens.dart';
 import 'package:flutter_gram/screens/signup/cubit/signup_cubit.dart';
 
@@ -50,7 +52,27 @@ class CustomRouter {
 
   static Route onGenerateNestedRoute(RouteSettings settings) {
     print('Nested Route: ${settings.name}');
-    return MaterialPageRoute(builder: (_) => Scaffold(body: Center(child: Text('Error Page'),),));
+    
+    switch (settings.name) {
+      case '/editProfile':
+        
+        final EditProfileScreenArgs args = settings.arguments;
+        return MaterialPageRoute(
+          builder: (_) => 
+            BlocProvider<EditProfileCubit>(
+              create: (context) => EditProfileCubit(
+                userRepository: context.read<UserRepository>(),
+                storageRepository: context.read<StorageRepository>(),
+                profileBloc: args.context.read<ProfileBloc>()
+              ),
+              child: EditProfileScreen(user: args.context.read<ProfileBloc>().state.user)
+            )
+        );
+        
+      default:
+        return MaterialPageRoute(builder: (_) => Scaffold(body: Center(child: Text('Error Page'),),));
+    }
+
   }
 
 }
