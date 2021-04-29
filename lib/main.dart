@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gram/blocs/blocs.dart';
 import 'package:flutter_gram/blocs/simple_bloc_observer.dart';
 import 'package:flutter_gram/config/custom_router.dart';
+import 'package:flutter_gram/repositories/post/post_repository.dart';
 import 'package:flutter_gram/repositories/repositories.dart';
 
 
@@ -31,6 +32,9 @@ class MyApp extends StatelessWidget {
         ),
         RepositoryProvider<StorageRepository>(
           create: (_) => StorageRepository(),
+        ),
+        RepositoryProvider<PostRepository>(
+          create: (_) => PostRepository(),
         ),
       ],
       child: MultiBlocProvider(

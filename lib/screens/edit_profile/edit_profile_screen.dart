@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gram/helpers/helpers.dart';
@@ -124,7 +122,7 @@ class EditProfileScreen extends StatelessWidget {
     if(pickedFile != null) {
       context
         .read<EditProfileCubit>()
-        .profileImageChanged(File(pickedFile.path));
+        .profileImageChanged(pickedFile);
     }
 
   }
