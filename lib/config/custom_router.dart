@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gram/blocs/auth/auth_bloc.dart';
+import 'package:flutter_gram/repositories/post/post_repository.dart';
 import 'package:flutter_gram/repositories/repositories.dart';
 import 'package:flutter_gram/screens/HomeScreen.dart';
 import 'package:flutter_gram/screens/edit_profile/cubit/edit_profile_cubit.dart';
@@ -54,8 +56,8 @@ class CustomRouter {
     print('Nested Route: ${settings.name}');
     
     switch (settings.name) {
+      
       case '/editProfile':
-        
         final EditProfileScreenArgs args = settings.arguments;
         return MaterialPageRoute(
           builder: (_) => 
@@ -67,6 +69,19 @@ class CustomRouter {
               ),
               child: EditProfileScreen(user: args.context.read<ProfileBloc>().state.user)
             )
+        );
+
+      case '/profile':
+        final ProfileScreenArgs args = settings.arguments;
+        return MaterialPageRoute(
+          builder: (context) => BlocProvider(
+            create: (_) => ProfileBloc(
+              authBloc: context.read<AuthBloc>(),
+              postRepository: context.read<PostRepository>(),
+              userRepository: context.read<UserRepository>()
+            )..add(ProfileLoadUser(userId: args.userId)),
+            child: ProfileScreen(),
+          )
         );
         
       default:

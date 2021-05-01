@@ -8,6 +8,7 @@ import 'package:flutter_gram/repositories/repositories.dart';
 import 'package:flutter_gram/screens/create_post/cubit/create_post_cubit.dart';
 import 'package:flutter_gram/screens/profile/bloc/profile_bloc.dart';
 import 'package:flutter_gram/screens/screens.dart';
+import 'package:flutter_gram/screens/search/cubit/search_user_cubit.dart';
 
 class TabNavigator extends StatelessWidget {
   static const String tabNavigatorRoot = '/';
@@ -43,14 +44,18 @@ class TabNavigator extends StatelessWidget {
       case BottomNavItem.feed:
         return FeedScreen();
       case BottomNavItem.search:
-        return SearchScreen();
+        return BlocProvider<SearchUserCubit>(
+          create: (context) => SearchUserCubit(
+            userRepository: context.read<UserRepository>()
+          ),
+          child: SearchScreen(),
+        );
       case BottomNavItem.create:
         return BlocProvider<CreatePostCubit>(
           create: (context) => CreatePostCubit(
-            authBloc: context.read<AuthBloc>(),
-            postRepository: context.read<PostRepository>(),
-            storageRepository: context.read<StorageRepository>()
-          ),
+              authBloc: context.read<AuthBloc>(),
+              postRepository: context.read<PostRepository>(),
+              storageRepository: context.read<StorageRepository>()),
           child: CreatePostScreen(),
         );
       case BottomNavItem.notifications:
@@ -59,6 +64,7 @@ class TabNavigator extends StatelessWidget {
         return BlocProvider(
           create: (_) => ProfileBloc(
               userRepository: context.read<UserRepository>(),
+              postRepository: context.read<PostRepository>(),
               authBloc: context.read<AuthBloc>())
             ..add(ProfileLoadUser(
                 userId: context.read<AuthBloc>().state.user.uid)),
